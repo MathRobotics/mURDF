@@ -143,8 +143,10 @@ class Uvisual:
   geometry : Ugeometry
   material : Umaterial
   origin : Uorigin
-  
-  def __init__(self, geometry_, material_, origin_ = []):
+
+  def __init__(self, geometry_, material_, origin_ = None):
+    if origin_ is None:
+      origin_ = []
     self.geometry = geometry_
     self.material = material_
     self.origin = origin_
@@ -160,7 +162,9 @@ class Ucollision:
   geometry : Ugeometry
   origin : Uorigin
 
-  def __init__(self, geometry_, origin_ = []):
+  def __init__(self, geometry_, origin_ = None):
+    if origin_ is None:
+      origin_ = []
     self.geometry = geometry_
     self.origin = origin_
     
@@ -174,8 +178,10 @@ class Uinertial:
   mass : Umass
   inertia : Uinertia
   origin : Uorigin
-  
-  def __init__(self, mass_, inertia_, origin_ = []):
+
+  def __init__(self, mass_, inertia_, origin_ = None):
+    if origin_ is None:
+      origin_ = []
     self.mass = mass_
     self.inertia = inertia_
     self.origin = origin_
@@ -192,8 +198,12 @@ class Ulink:
   visual : Uvisual
   collision : Ucollision
   inertial : Uinertial
-  
-  def __init__(self, name_, visual_, inertial_ = [], collision_ = [], ):
+
+  def __init__(self, name_, visual_, inertial_ = None, collision_ = None, ):
+    if inertial_ is None:
+      inertial_ = []
+    if collision_ is None:
+      collision_ = []
     self.name = name_
     self.visual = visual_
     self.inertial = inertial_
@@ -208,7 +218,13 @@ class Ujoint:
   limit : Ulimit
   origin : Uorigin
 
-  def __init__(self, name_, type_, axis_, p_name_, limit_ = [], c_name_ = [], origin_ = []):
+  def __init__(self, name_, type_, axis_, p_name_, limit_ = None, c_name_ = None, origin_ = None):
+    if limit_ is None:
+      limit_ = []
+    if c_name_ is None:
+      c_name_ = []
+    if origin_ is None:
+      origin_ = []
     self.name = name_
     self.type = type_
     self.axis = axis_
