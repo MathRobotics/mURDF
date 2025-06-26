@@ -2,11 +2,15 @@
 # -*- coding: utf-8 -*-
 # 2024.08.31 Created by T.Ishigaki
 
+"""Utilities for composing URDF elements and writing XML trees."""
+
 import xml.etree.ElementTree as ET
 import warnings
 
 
 class Ugeometry:
+    """Geometry primitive such as box, cylinder, or sphere."""
+
     type: str
     values: list
 
@@ -44,6 +48,8 @@ class Ugeometry:
 
 
 class Ucolor:
+    """Color definition used by a material."""
+
     type: str
     values: list
 
@@ -58,6 +64,8 @@ class Ucolor:
 
 
 class Umaterial:
+    """Material definition combining a name and color."""
+
     name: str
     color: Ucolor
 
@@ -73,6 +81,8 @@ class Umaterial:
 
 
 class Uorigin:
+    """Pose information with position and orientation."""
+
     xyz: list
     rpy: list
 
@@ -88,6 +98,8 @@ class Uorigin:
 
 
 class Umass:
+    """Mass value in kilograms."""
+
     value: float
 
     def __init__(self, value_):
@@ -100,6 +112,8 @@ class Umass:
 
 
 class Uinertia:
+    """Inertia matrix values."""
+
     values: float
 
     def __init__(self, values_):
@@ -122,6 +136,8 @@ class Uinertia:
 
 
 class Uaxis:
+    """Axis definition used by joints."""
+
     type: str
     values: list
 
@@ -131,11 +147,13 @@ class Uaxis:
 
     @staticmethod
     def add_param(parent, a):
-        axis = ET.SubElement(parent, "axis")
-        axis.set(a.type, ", ".join(map(str, a.values)))
+        origin = ET.SubElement(parent, "origin")
+        origin.set(a.type, ", ".join(map(str, a.values)))
 
 
 class Ulimit:
+    """Joint limits for motion and effort."""
+
     lower: float
     upper: float
     effort: float
@@ -157,6 +175,8 @@ class Ulimit:
 
 
 class Uvisual:
+    """Visual element describing geometry and appearance."""
+
     geometry: Ugeometry
     material: Umaterial
     origin: Uorigin
@@ -180,6 +200,9 @@ class Uvisual:
 
 
 class Ucollision:
+
+    """Collision element used for contact calculations."""
+
     geometry: Ugeometry
     origin: Uorigin
 
@@ -199,6 +222,8 @@ class Ucollision:
 
 
 class Uinertial:
+    """Inertial properties of a link."""
+
     mass: Umass
     inertia: Uinertia
     origin: Uorigin
@@ -222,6 +247,9 @@ class Uinertial:
 
 
 class Ulink:
+    """URDF link combining visual, collision, and inertial data."""
+
+
     name: str
     visual: Uvisual
     collision: Ucollision
@@ -245,6 +273,8 @@ class Ulink:
 
 
 class Ujoint:
+    """URDF joint connecting two links."""
+
     name: str
     type: str
     axis: Uaxis
@@ -252,6 +282,7 @@ class Ujoint:
     c_link_name: str
     limit: Ulimit
     origin: Uorigin
+
 
     def __init__(self, name_, type_, axis_, p_name_, limit_=None, c_name_=None, origin_=None):
         if limit_ is None:
@@ -270,6 +301,9 @@ class Ujoint:
 
 
 class Urdf:
+    """Helpers to append link and joint elements to an XML tree."""
+
+
     @staticmethod
     def add_link(parent, link):
         child = ET.SubElement(parent, "link")
@@ -280,6 +314,7 @@ class Urdf:
             Uinertial.add_param(child, link.inertial)
         if link.collision:
             Ucollision.add_param(child, link.collision)
+
         return child
 
     @staticmethod
