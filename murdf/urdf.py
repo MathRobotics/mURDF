@@ -224,8 +224,8 @@ class Urdf:
     child = ET.SubElement(parent, 'link')
     child.set('name', link.name)
     if(link.visual): Uvisual.add_param(child, link.visual)
-    if(link.inertial): Ucollision.add_param(child, link.inertial)
-    if(link.collision): Uinertial.add_param(child, link.collision)
+    if(link.inertial): Uinertial.add_param(child, link.inertial)
+    if(link.collision): Ucollision.add_param(child, link.collision)
     return child
 
   @staticmethod
