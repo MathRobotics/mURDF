@@ -167,11 +167,11 @@ class Ulimit:
 
     @staticmethod
     def add_param(parent, l):
-        origin = ET.SubElement(parent, "origin")
-        origin.set("lower", str(l.lower))
-        origin.set("upper", str(l.upper))
-        origin.set("effort", str(l.effort))
-        origin.set("velocity", str(l.velocity))
+        limit = ET.SubElement(parent, "limit")
+        limit.set("lower", str(l.lower))
+        limit.set("upper", str(l.upper))
+        limit.set("effort", str(l.effort))
+        limit.set("velocity", str(l.velocity))
 
 
 class Uvisual:
@@ -181,7 +181,9 @@ class Uvisual:
     material: Umaterial
     origin: Uorigin
 
-    def __init__(self, geometry_, material_, origin_=[]):
+    def __init__(self, geometry_, material_, origin_=None):
+        if origin_ is None:
+            origin_ = []
         self.geometry = geometry_
         self.material = material_
         self.origin = origin_
@@ -198,12 +200,15 @@ class Uvisual:
 
 
 class Ucollision:
+
     """Collision element used for contact calculations."""
 
     geometry: Ugeometry
     origin: Uorigin
 
-    def __init__(self, geometry_, origin_=[]):
+    def __init__(self, geometry_, origin_=None):
+        if origin_ is None:
+            origin_ = []
         self.geometry = geometry_
         self.origin = origin_
 
@@ -223,7 +228,9 @@ class Uinertial:
     inertia: Uinertia
     origin: Uorigin
 
-    def __init__(self, mass_, inertia_, origin_=[]):
+    def __init__(self, mass_, inertia_, origin_=None):
+        if origin_ is None:
+            origin_ = []
         self.mass = mass_
         self.inertia = inertia_
         self.origin = origin_
@@ -242,6 +249,7 @@ class Uinertial:
 class Ulink:
     """URDF link combining visual, collision, and inertial data."""
 
+
     name: str
     visual: Uvisual
     collision: Ucollision
@@ -251,9 +259,13 @@ class Ulink:
         self,
         name_,
         visual_,
-        inertial_=[],
-        collision_=[],
+        inertial_=None,
+        collision_=None,
     ):
+        if inertial_ is None:
+            inertial_ = []
+        if collision_ is None:
+            collision_ = []
         self.name = name_
         self.visual = visual_
         self.inertial = inertial_
@@ -271,7 +283,14 @@ class Ujoint:
     limit: Ulimit
     origin: Uorigin
 
-    def __init__(self, name_, type_, axis_, p_name_, limit_=[], c_name_=[], origin_=[]):
+
+    def __init__(self, name_, type_, axis_, p_name_, limit_=None, c_name_=None, origin_=None):
+        if limit_ is None:
+            limit_ = []
+        if c_name_ is None:
+            c_name_ = []
+        if origin_ is None:
+            origin_ = []
         self.name = name_
         self.type = type_
         self.axis = axis_
@@ -284,6 +303,7 @@ class Ujoint:
 class Urdf:
     """Helpers to append link and joint elements to an XML tree."""
 
+
     @staticmethod
     def add_link(parent, link):
         child = ET.SubElement(parent, "link")
@@ -291,9 +311,10 @@ class Urdf:
         if link.visual:
             Uvisual.add_param(child, link.visual)
         if link.inertial:
-            Ucollision.add_param(child, link.inertial)
+            Uinertial.add_param(child, link.inertial)
         if link.collision:
-            Uinertial.add_param(child, link.collision)
+            Ucollision.add_param(child, link.collision)
+
         return child
 
     @staticmethod
@@ -308,9 +329,9 @@ class Urdf:
         if joint.origin:
             Uorigin.add_param(j, joint.origin)
         if joint.p_link_name:
-            p_name = ET.SubElement(j, "parent link")
+            p_name = ET.SubElement(j, "parent")
             p_name.set("link", joint.p_link_name)
         if joint.c_link_name:
-            c_name = ET.SubElement(j, "child link")
+            c_name = ET.SubElement(j, "child")
             c_name.set("link", joint.c_link_name)
         return j
