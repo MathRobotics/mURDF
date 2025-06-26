@@ -116,8 +116,8 @@ class Uaxis:
   
   @staticmethod
   def add_param(parent, a):
-    origin = ET.SubElement(parent, 'origin')
-    origin.set(a.type, ', '.join(map(str, a.values)))
+    axis = ET.SubElement(parent, 'axis')
+    axis.set(a.type, ', '.join(map(str, a.values)))
 
 class Ulimit:
   lower : float
@@ -133,11 +133,11 @@ class Ulimit:
   
   @staticmethod
   def add_param(parent, l):
-    origin = ET.SubElement(parent, 'origin')
-    origin.set('lower', str(l.lower))
-    origin.set('upper', str(l.upper))
-    origin.set('effort', str(l.effort))
-    origin.set('velocity', str(l.velocity))
+    limit = ET.SubElement(parent, 'limit')
+    limit.set('lower', str(l.lower))
+    limit.set('upper', str(l.upper))
+    limit.set('effort', str(l.effort))
+    limit.set('velocity', str(l.velocity))
 
 class Uvisual:
   geometry : Ugeometry
@@ -240,8 +240,8 @@ class Urdf:
     child = ET.SubElement(parent, 'link')
     child.set('name', link.name)
     if(link.visual): Uvisual.add_param(child, link.visual)
-    if(link.inertial): Ucollision.add_param(child, link.inertial)
-    if(link.collision): Uinertial.add_param(child, link.collision)
+    if(link.inertial): Uinertial.add_param(child, link.inertial)
+    if(link.collision): Ucollision.add_param(child, link.collision)
     return child
 
   @staticmethod
@@ -253,9 +253,9 @@ class Urdf:
     if(joint.limit): Ulimit.add_param(j, joint.limit)
     if(joint.origin): Uorigin.add_param(j, joint.origin)
     if(joint.p_link_name):
-      p_name = ET.SubElement(j, 'parent link')
+      p_name = ET.SubElement(j, 'parent')
       p_name.set('link', joint.p_link_name)
     if(joint.c_link_name):
-      c_name = ET.SubElement(j, 'child link')
+      c_name = ET.SubElement(j, 'child')
       c_name.set('link', joint.c_link_name)
     return j
