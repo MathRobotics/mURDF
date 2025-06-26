@@ -254,7 +254,6 @@ class Ujoint:
 
 
 class Urdf:
-
     @staticmethod
     def add_link(parent, link):
         child = ET.SubElement(parent, "link")
